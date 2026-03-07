@@ -1,21 +1,50 @@
+/*
+LeetCode 977: Squares of a Sorted Array
+
+Goal:
+Given a non-decreasing (sorted) array `nums` that may contain negative values,
+return a new array containing the squares of each number, also sorted in
+non-decreasing order.
+
+Key idea (two pointers):
+- The largest square will come from the value with the largest absolute value.
+- In a sorted array, the largest absolute value must be at either end:
+  left (most negative) or right (most positive).
+- Compare abs(nums[left]) and abs(nums[right]) and place the larger square
+  at the end of the result array, filling from back to front.
+
+Time complexity:  O(n)  (single pass)
+Space complexity: O(n)  (output array)
+*/
+
 class Solution {
 public:
     vector<int> sortedSquares(vector<int>& nums) {
-        int n=nums.size();
-        int left=0,right=n-1;
-        vector<int> ans(n,0);
-        for(int i=n-1;i>=0;i--){
-            int val=0;
-            if(abs(nums[left])<abs(nums[right])){
-                val=nums[right];
+        int n = nums.size();
+
+        // Two pointers at both ends of the sorted input array
+        int left = 0, right = n - 1;
+
+        // Result array; we'll fill it from the back with the largest squares first
+        vector<int> ans(n, 0);
+
+        // Fill result from right to left (largest square to smallest square)
+        for (int i = n - 1; i >= 0; i--) {
+            int val = 0;
+
+            // Choose the side with the larger absolute value, since its square is larger
+            if (abs(nums[left]) < abs(nums[right])) {
+                val = nums[right];
                 right--;
-            }
-            else{
-                val=nums[left];
+            } else {
+                val = nums[left];
                 left++;
             }
-            ans[i]=val*val;
+
+            // Place the square into its correct position
+            ans[i] = val * val;
         }
+
         return ans;
     }
 };
