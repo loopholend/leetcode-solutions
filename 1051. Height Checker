@@ -1,22 +1,46 @@
+// LeetCode 1051: Height Checker
+// Idea: Count-sort style comparison.
+// Instead of sorting a copy of `heights`, we build a frequency array `hash`
+// (since heights are in [1..100]) and then iterate through the original array,
+// generating the "expected" sorted value on the fly and counting mismatches.
+
 class Solution {
 public:
     int heightChecker(vector<int>& heights) {
-        int n=heights.size();
-        vector<int> hash(101,0);
-        for(int i:heights){
-            hash[i]++;
+        int n = heights.size();
+
+        // hash[h] = how many students have height h
+        // Constraints allow fixed range 1..100, so this is O(1) extra space.
+        vector<int> hash(101, 0);
+
+        // Build frequency table of heights (like counting sort).
+        for (int h : heights) {
+            hash[h]++;
         }
-        int ans=0,id=1;
-        for(int i=0;i<n;i++){
-            while(hash[id]==0)id++;
-            if(id==heights[i]){
-                hash[id]--;
-            }
-            else{
+
+        int ans = 0;  // number of indices where actual != expected (sorted)
+        int id = 1;   // current height value we are "emitting" from the sorted order
+
+        // Walk original array positions i = 0..n-1
+        // At each position, figure out what the sorted height should be (id),
+        // then compare it to heights[i].
+        for (int i = 0; i < n; i++) {
+
+            // Advance id until we find the next height that still has remaining count.
+            while (hash[id] == 0) id++;
+
+            // Now `id` is the expected sorted height at position i.
+            if (id != heights[i]) {
+                // If the original height differs from expected sorted height,
+                // this position contributes to the answer.
                 ans++;
-                hash[id]--;
             }
+
+            // Consume one occurrence of this expected height and move on.
+            hash[id]--;
         }
+
+        // ans = number of positions where original differs from sorted order.
         return ans;
     }
 };
