@@ -1,0 +1,22 @@
+class Solution {
+public:
+    int heightChecker(vector<int>& heights) {
+        int n=heights.size();
+        vector<int> hash(101,0);
+        for(int i:heights){
+            hash[i]++;
+        }
+        int ans=0,id=1;
+        for(int i=0;i<n;i++){
+            while(hash[id]==0)id++;
+            if(id==heights[i]){
+                hash[id]--;
+            }
+            else{
+                ans++;
+                hash[id]--;
+            }
+        }
+        return ans;
+    }
+};
